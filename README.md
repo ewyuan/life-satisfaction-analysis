@@ -10,6 +10,9 @@
 * Variable Name: FAMINCG2 and SLM_01 - Family income - Total (before tax) and Feelings about life as a whole.
 * Variable Name: DWELC and SLM_01 - Dwelling type of the respondent and Feelings about life as a whole.
 * Variable Name: EHG3_01B and SLM_01 - Education - Highest certificate, diploma or degree and Feelings about life as a whole.
+* Variable Name: SRH_115 or SRH_110 and SLM_01.
+
+
 
 
 ### Questionnaire for 2017 data
