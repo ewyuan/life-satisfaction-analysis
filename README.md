@@ -1,7 +1,7 @@
 # sta304-ps2
 
 ### Potential Ideas
-* Multiple models related to Income all connected to each other
+* ~~Multiple models related to Income all connected to each other~~
 
 #### Variables we can run regression on.
 * Variable Name: VISMIN and SLM_01 - Visible minority status of the respondent and Feelings about life as a whole.
