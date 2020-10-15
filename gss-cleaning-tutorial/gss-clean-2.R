@@ -12,7 +12,7 @@ thresh = round(mean(gss$feelings_life, na.rm=TRUE))
 data = data %>% 
   mutate(is_satisfied = if_else(feelings_life >= thresh, 1, 0), na.rm = TRUE) 
 
-N = 33000000
+N = 30530800
 n = length(data$is_satisfied)
 fpc.srs = rep(N, n)
 
