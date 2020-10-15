@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 project.Rproj
+
+# Avoid being sued
+*.csv
