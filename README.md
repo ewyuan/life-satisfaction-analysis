@@ -11,7 +11,7 @@
 * Variable Name: DWELC and SLM_01 - Dwelling type of the respondent and Feelings about life as a whole.
 
 ### Questionnaire for 2017 data
-https://www23.statcan.gc.ca/imdb/p3Instr.pl?Function=assembleInstr&lang=en&Item_Id=335815
+[Link is here] (https://www23.statcan.gc.ca/imdb/p3Instr.pl?Function=assembleInstr&lang=en&Item_Id=335815)
 
 #### N for Target Population
 Number of people 15 years old or older = 30633177 (https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501)
