@@ -6,7 +6,7 @@
 #### Variables we can run regression on.
 * Variable Name: VISMIN and SLM_01 - Visible minority status of the respondent and Feelings about life as a whole.
 * ~~Variable Name: BRTHPRVC and SLM_01 - Province or territory of birth and Feelings about life as a whole.~~
-~~* Variable Name: UWS_230 and SLM_01 - Usual work schedule description and Feelings about life as a whole.~~
+* Variable Name: UWS_230 and SLM_01 - Usual work schedule description and Feelings about life as a whole.
 * Variable Name: UHW_16GR and SLM_01 - Average number of hours worked per week and Feelings about life as a whole.
 
 * Variable Name: FAMINCG2 and SLM_01 - Family income - Total (before tax) and Feelings about life as a whole.
