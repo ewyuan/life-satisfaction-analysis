@@ -12,3 +12,11 @@
 
 ### Questionnaire for 2017 data
 https://www23.statcan.gc.ca/imdb/p3Instr.pl?Function=assembleInstr&lang=en&Item_Id=335815
+
+#### N for Target Population
+Number of people 15 years old or older = 30633177 (https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501)
+- 30633177/36545295 = 0.8382249206 Proportion of 15yo or older in 2017
+
+Number of people in 10 provinces in Q3 2017 = 36423159 (https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501)
+
+Assumming the proportion of 15 yo or older in 2017 is the same across the country, then 36423159*.0.8382249206 = **30530800**
