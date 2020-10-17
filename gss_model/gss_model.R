@@ -23,6 +23,13 @@ satisfied.glm %>%
   broom::tidy() %>% 
   knitr::kable()
 
+glm_step_bic <- step(satisfied.glm, k=log(n), trace=0)
+glm_step_bic
+
+glm_step_bic %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+
 # bayesian model
 satisfied.brm <- brm(feelings_life_binary ~ as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
                        as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
