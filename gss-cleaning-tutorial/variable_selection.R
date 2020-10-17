@@ -1,7 +1,6 @@
 library(tidyverse)
 library(car)
-gss_ <- gss %>% select(!feelings_life)
 
-model <- lm(feelings_life_binary ~., data = gss_)
+model <- lm(feelings_life ~ ., data = select(gss_raw, !feelings_life_binary))
 
 car::vif(model)

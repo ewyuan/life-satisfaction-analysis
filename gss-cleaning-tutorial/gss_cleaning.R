@@ -36,9 +36,9 @@
 #### Workspace set-up ####
 library(janitor)
 library(tidyverse)
-setwd("/cloud/project/gss-cleaning-tutorial")
+setwd("~/Documents/sta304-ps2/gss-cleaning-tutorial")
 # Load the data dictionary and the raw data and correct the variable names
-raw_data <- read_csv("AAq2misn.csv")
+raw_data <- read_csv("AAgxzBBK.csv")
 dict <- read_lines("gss_dict.txt", skip = 18) # skip is because of preamble content
 # Now we need the labels because these are the actual responses that we need
 labels_raw <- read_file("gss_labels.txt")
@@ -100,16 +100,16 @@ cw_statements <-
 
 #### Apply that dictionary to the raw data ####
 # Pull out a bunch of variables and then apply the case when statement for the categorical variables
-gss <- raw_data %>% 
-  select(CASEID, 
-         slm_01,
+gss_raw <- raw_data %>% 
+  select(slm_01,
          vismin,
          uhw_16gr,
          famincg2,
          dwelc,
          ehg3_01b,
          srh_110,
-         srh_115) %>%
+         srh_115)
+gss <- gss_raw %>%
   mutate_at(.vars = vars(vismin:srh_115),
             .funs = funs(eval(parse(text = cw_statements %>%
                                       filter(variable_name==deparse(substitute(.))) %>%
@@ -117,6 +117,17 @@ gss <- raw_data %>%
                                       pull()))))
 
 # Fix the names
+gss_raw <- gss_raw %>% 
+  clean_names() %>% 
+  rename(feelings_life = slm_01,
+         edudation = ehg3_01b,
+         hours_worked = uhw_16gr,
+         family_income = famincg2,
+         vis_minority = vismin,
+         hh_type = dwelc,
+         self_rated_health = srh_110,
+         self_rated_mental_health = srh_115)
+
 gss <- gss %>% 
   clean_names() %>% 
   rename(feelings_life = slm_01,
@@ -130,17 +141,20 @@ gss <- gss %>%
 
 #### Clean up ####
 
-# removed categories (96-99) of slm_01
+# removed categories (96-99) of feelings_life
 gss <- gss %>%
-  filter(slm_01 <= 10)
+  filter(feelings_life <= 10)
+gss_raw <- gss_raw %>%
+  filter(feelings_life <= 10)
 
-# find mean of slm_01 col
-mean_slm_01 <- round(mean(gss$slm_01), 0)
+# find mean of feelings_life col
+mean_feelings_life <- round(mean(gss$feelings_life), 0)
 
-# create a dummy (binary) variable "feeling_life_binary" for slm_01
+# create a binary variable "feeling_life_binary" for feelings_life
 gss <- gss %>% 
-  mutate(feelings_life_binary = ifelse(slm_01 >= mean_slm_01, 1, 0))
-
+  mutate(feelings_life_binary = ifelse(feelings_life >= mean_feelings_life, 1, 0))
+gss_raw <- gss_raw %>% 
+  mutate(feelings_life_binary = ifelse(feelings_life >= mean_feelings_life, 1, 0))
 
 write_csv(gss, "gss.csv")
 
