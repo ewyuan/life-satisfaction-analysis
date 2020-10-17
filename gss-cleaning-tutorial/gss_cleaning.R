@@ -100,7 +100,7 @@ cw_statements <-
 
 #### Apply that dictionary to the raw data ####
 # Pull out a bunch of variables and then apply the case when statement for the categorical variables
-gss_raw <- raw_data %>% 
+gss <- raw_data %>% 
   select(slm_01,
          vismin,
          uhw_16gr,
@@ -109,7 +109,22 @@ gss_raw <- raw_data %>%
          ehg3_01b,
          srh_110,
          srh_115)
-gss <- gss_raw %>%
+
+
+# Removes observations with fields we're not interested in
+gss <- gss %>%
+  filter(slm_01 <= 10) %>%
+  filter(vismin <= 2) %>%
+  filter(uhw_16gr <= 5) %>%
+  filter(famincg2 <= 6) %>%
+  filter(dwelc <= 4) %>%
+  filter(ehg3_01b <= 6) %>%
+  filter(srh_110 <= 5) %>%
+  filter(srh_115 <= 5)
+  
+  
+
+gss <- gss %>%
   mutate_at(.vars = vars(vismin:srh_115),
             .funs = funs(eval(parse(text = cw_statements %>%
                                       filter(variable_name==deparse(substitute(.))) %>%
@@ -117,17 +132,6 @@ gss <- gss_raw %>%
                                       pull()))))
 
 # Fix the names
-gss_raw <- gss_raw %>% 
-  clean_names() %>% 
-  rename(feelings_life = slm_01,
-         edudation = ehg3_01b,
-         hours_worked = uhw_16gr,
-         family_income = famincg2,
-         vis_minority = vismin,
-         hh_type = dwelc,
-         self_rated_health = srh_110,
-         self_rated_mental_health = srh_115)
-
 gss <- gss %>% 
   clean_names() %>% 
   rename(feelings_life = slm_01,
@@ -139,22 +143,12 @@ gss <- gss %>%
          self_rated_health = srh_110,
          self_rated_mental_health = srh_115)
 
-#### Clean up ####
 
-# removed categories (96-99) of feelings_life
-gss <- gss %>%
-  filter(feelings_life <= 10)
-gss_raw <- gss_raw %>%
-  filter(feelings_life <= 10)
-
-# find mean of feelings_life col
+# Find mean of feelings_life col
 mean_feelings_life <- round(mean(gss$feelings_life), 0)
 
-# create a binary variable "feeling_life_binary" for feelings_life
+# Create a binary variable "feeling_life_binary" for feelings_life
 gss <- gss %>% 
   mutate(feelings_life_binary = ifelse(feelings_life >= mean_feelings_life, 1, 0))
-gss_raw <- gss_raw %>% 
-  mutate(feelings_life_binary = ifelse(feelings_life >= mean_feelings_life, 1, 0))
-
 write_csv(gss, "gss.csv")
 
