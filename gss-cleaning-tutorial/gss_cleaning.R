@@ -14,23 +14,23 @@
 # Date: 7 October 2020
 # License: MIT
 # Pre-reqs: You need to have downloaded the data from the library. To do that: 
-  ## 1. Go to: http://www.chass.utoronto.ca/
-  ## 2. Data centre --> UofT users or http://dc.chass.utoronto.ca/myaccess.html
-  ## 3. Click SDA @ CHASS, should redirect to sign in. Sign in.
-  ## 4. Continue in English (you're welcome to use the French, but we probably can't
-  ## help you too much).
-  ## 5. Crtl F GSS, click
-  ## 6. Click "Data" on the one you want. We used 2017, but you may want a different 
-  ## wave. In particular the General Social Survey on social identity (cycle 27), 
-  ## 2013 has some variables on voter participation if you're into that sort of 
-  ## thing. You're welcome to pick any year but this code applies to 2017.
-  ## 7. Click download
-  ## 8. Select CSV data file, data definitions for STATA (gross, but stick with it for now).
-  ## 9. Can select all variables by clicking button next to green colored "All". Then continue.
-  ## 10. Create the files, download and save
+## 1. Go to: http://www.chass.utoronto.ca/
+## 2. Data centre --> UofT users or http://dc.chass.utoronto.ca/myaccess.html
+## 3. Click SDA @ CHASS, should redirect to sign in. Sign in.
+## 4. Continue in English (you're welcome to use the French, but we probably can't
+## help you too much).
+## 5. Crtl F GSS, click
+## 6. Click "Data" on the one you want. We used 2017, but you may want a different 
+## wave. In particular the General Social Survey on social identity (cycle 27), 
+## 2013 has some variables on voter participation if you're into that sort of 
+## thing. You're welcome to pick any year but this code applies to 2017.
+## 7. Click download
+## 8. Select CSV data file, data definitions for STATA (gross, but stick with it for now).
+## 9. Can select all variables by clicking button next to green colored "All". Then continue.
+## 10. Create the files, download and save
 # Check: 
-  ## You WILL need to change the raw data name. Search for .csv - line 41
-  ## You may need to adjust the filepaths depending on your system. Search for: read_
+## You WILL need to change the raw data name. Search for .csv - line 41
+## You may need to adjust the filepaths depending on your system. Search for: read_
 
 
 #### Workspace set-up ####
@@ -38,7 +38,7 @@ library(janitor)
 library(tidyverse)
 setwd("/cloud/project/gss-cleaning-tutorial")
 # Load the data dictionary and the raw data and correct the variable names
-raw_data <- read_csv("AAgxzBBK.csv")
+raw_data <- read_csv("AAq2misn.csv")
 dict <- read_lines("gss_dict.txt", skip = 18) # skip is because of preamble content
 # Now we need the labels because these are the actual responses that we need
 labels_raw <- read_file("gss_labels.txt")
@@ -52,7 +52,7 @@ variable_descriptions <- as_tibble(dict) %>%
   mutate(value = str_remove_all(value, "\"")) %>% 
   rename(variable_description = value) %>% 
   bind_cols(tibble(variable_name = colnames(raw_data)[-1]))
- 
+
 # Now we want a variable name and the possible values
 labels_raw_tibble <- as_tibble(str_split(labels_raw, ";")[[1]]) %>% 
   filter(row_number()!=1) %>% 
@@ -129,81 +129,5 @@ gss <- gss %>%
          self_rated_mental_health = srh_115)
 
 #### Clean up ####
-gss <- gss %>% 
-  mutate_at(vars(age:future_children_intention), 
-            .funs = funs(ifelse(.=="Valid skip"|.=="Refusal"|.=="Not stated", "NA", .))) 
-
-gss <- gss %>% 
-  mutate(is_male = ifelse(sex=="Male", 1, 0)) 
-
-gss <- gss %>% 
-  mutate_at(vars(fin_supp_child_supp:fin_supp_other), .funs = funs(case_when(
-    .=="Yes"~1,
-    .=="No"~0,
-    .=="NA"~as.numeric(NA)
-  )))
-
-main_act <- raw_data %>% 
-  mutate(main_activity = case_when(
-    mpl_105a=="Yes"~ "Working at a paid job/business",
-    mpl_105b=="Yes" ~ "Looking for paid work",
-    mpl_105c=="Yes" ~ "Going to school",
-    mpl_105d=="Yes" ~ "Caring for children",
-    mpl_105e=="Yes" ~ "Household work", 
-    mpl_105i=="Yes" ~ "Other", 
-    TRUE~ "NA")) %>% 
-  select(main_activity) %>% 
-  pull()
-
-age_diff <- raw_data %>% 
-  select(marstat, aprcu0c, adfgrma0) %>% 
-  mutate_at(.vars = vars(aprcu0c:adfgrma0),
-            .funs = funs(eval(parse(text = cw_statements %>%
-                                      filter(variable_name==deparse(substitute(.))) %>%
-                                      select(cw_statement) %>%
-                                      pull())))) %>% 
-  mutate(age_diff = ifelse(marstat=="Living common-law", aprcu0c, adfgrma0)) %>% 
-  mutate_at(vars(age_diff), .funs = funs(ifelse(.=="Valid skip"|.=="Refusal"|.=="Not stated", "NA", .))) %>% 
-  select(age_diff) %>% 
-  pull()
-
-gss <- gss %>% mutate(main_activity = main_act, age_diff = age_diff)
-
-# Change some from strings into numbers
-gss <- gss %>% 
-  rowwise() %>% 
-  mutate(hh_size = str_remove(string = hh_size, pattern = "\\ .*")) %>% 
-  mutate(hh_size = case_when(
-    hh_size=="One" ~ 1,
-    hh_size=="Two" ~ 2,
-    hh_size=="Three" ~ 3,
-    hh_size=="Four" ~ 4,
-    hh_size=="Five" ~ 5,
-    hh_size=="Six" ~ 6
-  )) 
-
-gss <- gss %>% 
-  rowwise() %>% 
-  mutate(number_marriages = str_remove(string = number_marriages, pattern = "\\ .*")) %>% 
-  mutate(number_marriages = case_when(
-    number_marriages=="No" ~ 0,
-    number_marriages=="One" ~ 1,
-    number_marriages=="Two" ~ 2,
-    number_marriages=="Three" ~ 3,
-    number_marriages=="Four" ~ 4
-  )) 
-
-gss <- gss %>% 
-  rowwise() %>% 
-  mutate(number_total_children_known = ifelse(number_total_children_intention=="Don't know"|number_total_children_intention=="NA", 0, 1)) %>% 
-  mutate(number_total_children_intention = str_remove(string = number_total_children_intention, pattern = "\\ .*")) %>% 
-  mutate(number_total_children_intention = case_when(
-    number_total_children_intention=="None" ~ 0,
-    number_total_children_intention=="One" ~ 1,
-    number_total_children_intention=="Two" ~ 2,
-    number_total_children_intention=="Three" ~ 3,
-    number_total_children_intention=="Four" ~ 4,
-    number_total_children_intention=="Don't" ~ as.numeric(NA)
-  )) 
 
 write_csv(gss, "gss.csv")
