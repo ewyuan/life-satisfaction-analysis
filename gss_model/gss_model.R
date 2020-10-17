@@ -13,3 +13,6 @@ satisfied.design <- svydesign(id=~1, data=data, fpc=fpc.srs)
 satisfied.glm = svyglm(feelings_life_binary ~ as.factor(vis_minority) + hours_worked,
                        satisfied.design, family="binomial")
 # family_income + hh_type + education + self_rated_health + self_rated_mental_health
+satisfied.glm %>% 
+  broom::tidy() %>% 
+  knitr::kable()
