@@ -110,7 +110,7 @@ gss <- raw_data %>%
          ehg3_01b,
          srh_110,
          srh_115) %>%
-  mutate_at(.vars = vars(slm_01:srh_115),
+  mutate_at(.vars = vars(vismin:srh_115),
             .funs = funs(eval(parse(text = cw_statements %>%
                                       filter(variable_name==deparse(substitute(.))) %>%
                                       select(cw_statement) %>%
@@ -130,4 +130,17 @@ gss <- gss %>%
 
 #### Clean up ####
 
+# removed categories (96-99) of slm_01
+gss <- gss %>%
+  filter(slm_01 <= 10)
+
+# find mean of slm_01 col
+mean_slm_01 <- round(mean(gss$slm_01), 0)
+
+# create a dummy (binary) variable "feeling_life_binary" for slm_01
+gss <- gss %>% 
+  mutate(feelings_life_binary = ifelse(slm_01 >= mean_slm_01, 1, 0))
+
+
 write_csv(gss, "gss.csv")
+
