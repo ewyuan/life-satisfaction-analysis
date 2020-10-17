@@ -4,6 +4,8 @@ library(janitor)
 library(tidyverse)
 library(survey)
 library(brms)
+library(pROC)
+
 
 data <- read_csv("gss.csv")
 
@@ -29,6 +31,17 @@ glm_step_bic
 glm_step_bic %>% 
   broom::tidy() %>% 
   knitr::kable()
+
+#Goodness of Fit: ROC curve
+p2 <- fitted(glm_step_bic)
+y <- data$feelings_life_binary
+roc_logit2 <- roc(y ~ p2)
+TPR <- roc_logit2$sensitivities
+FPR <- 1 - roc_logit2$specificities
+plot(FPR, TPR, xlim =c(0,1), ylim =c(0,1), type ='l', lty = 1, lwd = 2,col ='red', bty = "n", main="BIC Stepwise Model ROC")
+abline(a = 0, b = 1, lty = 2, col ='blue')
+text(0.7,0.4,label =paste("AUC = ",round(auc(roc_logit2),4)))
+auc(roc_logit2) 
 
 # bayesian model
 satisfied.brm <- brm(feelings_life_binary ~ as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
