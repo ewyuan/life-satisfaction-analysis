@@ -10,22 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Model
+We will model the probability of a Canadian feeling satisfied about life as whole based on a set of given factors using Logistic Regression. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Let $p$ = the probability of a Canadian feeling satisfied, where "feeling satisfied" is determined if an individual rates their feeling about life as a whole greater than 8. Then our GLM will be formulated as the following: 
+$$
+\log({\frac{p}{1-p}}) = \beta_0 + \sum^{K}_{i=1}\beta_ix_i
+$$
+.
+Define K 
