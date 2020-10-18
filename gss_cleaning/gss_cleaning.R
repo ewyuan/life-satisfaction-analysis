@@ -109,7 +109,8 @@ gss <- raw_data %>%
          dwelc,
          ehg3_01b,
          srh_110,
-         srh_115)
+         srh_115,
+         agec)
 
 
 # Removes observations with fields we're not interested in
@@ -121,7 +122,8 @@ gss <- gss %>%
   filter(dwelc <= 4) %>%
   filter(ehg3_01b <= 6) %>%
   filter(srh_110 <= 5) %>%
-  filter(srh_115 <= 5)
+  filter(srh_115 <= 5) %>%
+  filter(agec <= 80)
 
 
 
@@ -141,6 +143,7 @@ gss <- gss %>%
          family_income = famincg2,
          vis_minority = vismin,
          hh_type = dwelc,
+         age = agec,
          self_rated_health = srh_110,
          self_rated_mental_health = srh_115)
 
