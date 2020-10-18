@@ -1,5 +1,6 @@
 #install.packages("survey")
 #install.packages("brms")
+rm(list=ls())
 library(janitor)
 library(tidyverse)
 library(survey)
@@ -15,7 +16,7 @@ fpc.srs = rep(N, n)
 
 satisfied.design <- svydesign(id=~1, data=data, fpc=fpc.srs)
 
-satisfied.glm <- svyglm(feelings_life_binary ~ as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
+satisfied.glm <- svyglm(feelings_life_binary ~ age + as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
                          as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
                          as.factor(edudation),
                         design=satisfied.design, family="binomial")
@@ -38,12 +39,13 @@ roc_curve <- function(glm){
   roc_logit2 <- roc(y ~ p2)
   TPR <- roc_logit2$sensitivities
   FPR <- 1 - roc_logit2$specificities
-  plot(FPR, TPR, xlim =c(0,1), ylim =c(0,1), type ='l', lty = 1, lwd = 2,col ='red', bty = "n", main="BIC Stepwise Model ROC")
+  plot(FPR, TPR, xlim =c(0,1), ylim =c(0,1), type ='l', lty = 1, lwd = 2,col ='red', bty = "n", main="ROC")
   abline(a = 0, b = 1, lty = 2, col ='blue')
   text(0.7,0.4,label =paste("AUC = ",round(auc(roc_logit2),4)))
   auc(roc_logit2) 
 }
 
+par(mfrow=c(1,2)) # put two graphs on same line
 roc_curve(satisfied.glm)
 roc_curve(glm_step_bic)
 
