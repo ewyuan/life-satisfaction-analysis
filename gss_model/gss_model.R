@@ -60,15 +60,15 @@ plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health", "v
 data %>% 
   ggplot( aes(y=family_income, fill=vis_minority)) +
   geom_bar() +
-  xlab("Family Income") +
-  ylab("Total Count") +
+  ylab("Family Income") +
+  xlab("Total Count") +
   ggtitle("Family Income Between Visible Minority and Non Visible Minority")
 
 data %>% 
   ggplot( aes(y=hours_worked, fill=vis_minority)) +
   geom_bar() +
-  xlab("Hours Worked") +
-  ylab("Total Count") +
+  ylab("Hours Worked") +
+  xlab("Total Count") +
   ggtitle("Hours Worked Between Visible Minority and Non Visible Minority")
 
 
