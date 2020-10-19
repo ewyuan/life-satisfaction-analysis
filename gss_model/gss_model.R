@@ -51,14 +51,11 @@ roc_curve(glm_step_bic)
 # plot model estimates
 library(sjPlot)
 
-#plot_model(satisfied.glm, type = "pred", terms = c("hh_type"))
-#plot_model(satisfied.glm, type = "pred", terms = c("vis_minority"))
-#plot_model(satisfied.glm, type = "pred", terms = c("hours_worked"))
-#plot_model(satisfied.glm, type = "pred", terms = c("family_income"))
-par(mfrow=c(1,2))
-plot_model(satisfied.glm, type = "pred", terms = c("self_rated_mental_health"))
-plot_model(satisfied.glm, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "")
-#plot_model(satisfied.glm, type = "pred", terms = c("education"))
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health")) +
+  scale_y_continuous(labels = scales::comma)
+
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "") +
+  scale_y_continuous(labels = scales::comma)
 
 data %>% 
   ggplot( aes(y=family_income, fill=vis_minority)) +
