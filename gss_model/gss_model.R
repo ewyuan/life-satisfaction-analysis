@@ -4,7 +4,6 @@ rm(list=ls())
 library(janitor)
 library(tidyverse)
 library(survey)
-library(brms)
 library(pROC)
 
 data <- read_csv("gss.csv")
@@ -58,19 +57,4 @@ plot_model(satisfied.glm, type = "pred", terms = c("hours_worked"))
 plot_model(satisfied.glm, type = "pred", terms = c("family_income"))
 plot_model(satisfied.glm, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "")
 plot_model(satisfied.glm, type = "pred", terms = c("education"))
-
-
-
-
-# bayesian model
-#satisfied.brm <- brm(feelings_life_binary ~ as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
-#                       as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
-#                       as.factor(education),
-#                     data=data,
-#                     family=bernoulli(),
-#                     seed=420)
-
-#satisfied.brm %>% 
-#  broom::tidy() %>% 
-#  knitr::kable()
 
