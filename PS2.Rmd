@@ -35,7 +35,21 @@ The primary variable of interest of this study is how people felt about their li
 
 As seen in Figure 1, it is evident that there is a left skew in the life satisfaction scores. Thus we became more interested in predicting whether a person’s life satisfaction score is above or below the mean value. Hence we constructed a new binary variable that represented feelings of life; if a response was below the 50th percentile they would have a feelings of life score of 0, and if a response was on or above the 50th percentile they would have a feelings of life score of 1. The value that represented the 50th percentile was 8.13, however since feelings of life scores are represented as integers, we rounded down to 8; moreover, all responses under 8 received a feelings of life of 0, otherwise 1.
 
-TODO: ** FIGURE 1: SHOW HISTOGRAM OF FEELINGS OF LIFE SCORE, WITH 50% PERCENTILE LINE **
+```{r}
+library(tidyverse)
+
+# Import cleaned GSS data
+setwd("~/Documents/sta304-ps2")
+gss <- read_csv("gss.csv")
+
+ggplot(gss, aes(x=feelings_life)) + 
+  labs(title = "Figure 1: Histogram of Feelings of Life") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  xlab("Feelings of Life") +
+  ylab("Count") +
+  geom_histogram(bins = 10) +
+  geom_vline(xintercept = round(mean(gss$feelings_life), 0), colour = "red")
+```
 
 ### *Visible Minority*
 
@@ -77,7 +91,7 @@ library(tidyverse)
 library(survey)
 library(pROC)
 
-data <- read_csv("gss_cleaning/gss.csv")
+data <- read_csv("gss.csv")
 
 # glm model
 N = 30530800
