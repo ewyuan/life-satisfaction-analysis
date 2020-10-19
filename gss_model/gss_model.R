@@ -4,7 +4,6 @@ rm(list=ls())
 library(janitor)
 library(tidyverse)
 library(survey)
-library(brms)
 library(pROC)
 
 data <- read_csv("gss.csv")
@@ -18,7 +17,7 @@ satisfied.design <- svydesign(id=~1, data=data, fpc=fpc.srs)
 
 satisfied.glm <- svyglm(feelings_life_binary ~ age + as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
                          as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
-                         as.factor(edudation),
+                         as.factor(education),
                         design=satisfied.design, family="binomial")
 
 satisfied.glm %>% 
@@ -52,26 +51,24 @@ roc_curve(glm_step_bic)
 # plot model estimates
 library(sjPlot)
 
-plot_model(satisfied.glm, type = "pred", terms = c("hh_type"))
-plot_model(satisfied.glm, type = "pred", terms = c("vis_minority"))
-plot_model(satisfied.glm, type = "pred", terms = c("hours_worked"))
-plot_model(satisfied.glm, type = "pred", terms = c("family_income"))
-plot_model(satisfied.glm, type = "pred", terms = c("self_rated_health"))
-plot_model(satisfied.glm, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "")
-plot_model(satisfied.glm, type = "pred", terms = c("edudation"))
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health")) +
+  scale_y_continuous(labels = scales::comma)
 
-library(visreg)
-visreg(satisfied.glm)
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "") +
+  scale_y_continuous(labels = scales::comma)
 
-# bayesian model
-#satisfied.brm <- brm(feelings_life_binary ~ as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
-#                       as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
-#                       as.factor(edudation),
-#                     data=data,
-#                     family=bernoulli(),
-#                     seed=420)
+data %>% 
+  ggplot( aes(y=family_income, fill=vis_minority)) +
+  geom_bar() +
+  ylab("Family Income") +
+  xlab("Total Count") +
+  ggtitle("Family Income Between Visible Minority and Non Visible Minority")
 
-#satisfied.brm %>% 
-#  broom::tidy() %>% 
-#  knitr::kable()
+data %>% 
+  ggplot( aes(y=hours_worked, fill=vis_minority)) +
+  geom_bar() +
+  ylab("Hours Worked") +
+  xlab("Total Count") +
+  ggtitle("Hours Worked Between Visible Minority and Non Visible Minority")
+
 

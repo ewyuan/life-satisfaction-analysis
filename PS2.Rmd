@@ -66,5 +66,40 @@ Let $p$ = the probability of a Canadian feeling satisfied, where "feeling satisf
 $$
 \log({\frac{p}{1-p}}) = \beta_0 + \sum^{K}_{i=1}\beta_ix_i
 $$
-.
-Define K 
+
+## Results
+```{r}
+#install.packages("survey")
+#install.packages("brms")
+rm(list=ls())
+library(janitor)
+library(tidyverse)
+library(survey)
+library(pROC)
+
+data <- read_csv("gss_cleaning/gss.csv")
+
+# glm model
+N = 30530800
+n = length(data$feelings_life_binary)
+fpc.srs = rep(N, n)
+
+satisfied.design <- svydesign(id=~1, data=data, fpc=fpc.srs)
+
+satisfied.glm <- svyglm(feelings_life_binary ~ age + as.factor(vis_minority) + as.factor(hours_worked) + as.factor(hh_type) + 
+                         as.factor(family_income) + as.factor(self_rated_health) + as.factor(self_rated_mental_health) + 
+                         as.factor(education),
+                        design=satisfied.design, family="binomial")
+
+satisfied.glm %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+
+glm_step_bic <- step(satisfied.glm, k=log(n), trace=0)
+glm_step_bic
+
+glm_step_bic %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+
+```
