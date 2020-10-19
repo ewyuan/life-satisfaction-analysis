@@ -138,7 +138,7 @@ gss <- gss %>%
 gss <- gss %>% 
   clean_names() %>% 
   rename(feelings_life = slm_01,
-         edudation = ehg3_01b,
+         education = ehg3_01b,
          hours_worked = uhw_16gr,
          family_income = famincg2,
          vis_minority = vismin,
