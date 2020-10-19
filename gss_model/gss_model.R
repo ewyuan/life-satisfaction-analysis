@@ -64,4 +64,11 @@ data %>%
   ylab("Total Count") +
   ggtitle("Family Income Between Visible Minority and Non Visible Minority")
 
+data %>% 
+  ggplot( aes(y=hours_worked, fill=vis_minority)) +
+  geom_bar() +
+  xlab("Hours Worked") +
+  ylab("Total Count") +
+  ggtitle("Hours Worked Between Visible Minority and Non Visible Minority")
+
 
