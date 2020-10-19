@@ -113,6 +113,17 @@ gss <- raw_data %>%
          agec)
 
 
+# Calculate % of data filtered
+num_before_filter_slm_01 <- gss %>% count()
+num_after_filter_slm_01 <- gss %>%filter(gss$slm_01 <= 10) %>% count()
+p_slm_01 <- num_after_filter_slm_01  / num_before_filter_slm_01
+
+num_before_filter_vismin <- gss %>% count()
+num_after_filter_vismin <- gss %>%filter(gss$vismin <= 2) %>% count()
+p_vismin_01 <- num_after_filter_vismin / num_before_filter_vismin
+
+
+
 # Removes observations with fields we're not interested in
 gss <- gss %>%
   filter(slm_01 <= 10) %>%

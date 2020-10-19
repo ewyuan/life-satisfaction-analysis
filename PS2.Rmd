@@ -10,6 +10,54 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
+# Abstract
+
+# Section 1: Introduction
+Life satisfaction is recognized to be an important measure of an individuals well-being. There are a lot of factors that influence one’s satisfaction of life. Factors like income [1], education [2], mental health [3], and physical health intuitively influence an individual’s life satisfaction. Less intuitively, there is increasing evidence that ethnic minorities and immigrants typically have lower levels of life satisfaction when compared to non-visible minorities [4]. Additionally, we wanted to also look into other factors like how many hours an individual works in a week as an additional factor to income; by having the number of hours an individual works in a week, this gives us further insight on the responses where there is high income, but the respondent is overworked which leads to lower levels of life satisfaction.
+
+In Section 2 we go over the design of the survey, as well as the data we chose and constructed. Section 3 provides the logistic regression model design. Section 4 provides the results of our model. Section 5 provides interpretation and analysis of our model and results.
+
+# Section 2: Data
+
+## Survey design
+The following section defines the source of the data, the sampling procedure used in the study, some potential drawbacks of using this specific sampling procedure, how respondents were contacted and finally a brief discussion on how the Non-responses were handled. All of the following information is adapted from the user guide.
+
+The data set used in this report was collected by GSS (General Social Survey) Canada from February 2nd to November 30th 2017 [12]. All respondents were interviewed via telephone. Households without telephones were excluded from the survey population. Telephone calls were made to randomly selected members within each household captured in the sample frame. During telephone calls if it was determined that a household did not have at least one person 15 years of age or older, the interview was terminated. The sampling technique employed by GSS to collect data for this survey was Stratified Random Sampling technique. Stratification was done based on the provinces. Each province had CMA[s] (Census Metropolitan Area) and non-CMA[s]. The following cities were considered their own strata: St. John’s, Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton, Winnipeg, Regina, Saskatoon, Calgary, Edmonton and Vancouver. Three more stratas were created by grouping the CMA[s] in Quebec, Ontario and British Columbia that are not listed above. Additionally, non-CMA[s] of each province were considered their own strata. Therefore, in total 27 stratas were created. To summarize, 17 stratas were made up of CMA[s] and an additional 10 were made up of the non-CMA[s] of each province. After stratification, phone numbers that belonged to the same address were grouped together. Each of these groups was then assigned to a stratum within the province they belonged to. Finally, a SRS (simple random sampling) without replacement of grouped phone numbers was performed in each stratum. Since the sampling followed SRS we assume that the observations are independent of each other. One of the drawbacks of a probability sampling like SRS is that it might be subject to non-participation from the randomly chosen participants. This can cause more time to be spent to clean and edit the data. For example, in this study non-responses for questions used for weighting were imputed based on other information from the questionnaire. Weights were also calibrated for responding telephones to represent non-responses. Some key-tasks of this survey were to aid the Canadian government with policy decisions. The survey was also designed to monitor changes in the living conditions and well-being of Canadian over time. Some disadvantages to the survey are that some of the survey questions are very long and difficult to understand. The survey is also very lengthy. This might cause some individuals to leave in between the survey. Some strengths of the survey are that if completed it provides lots of data points for analysis that can help the government with policy decisions.
+
+## Study population
+The analysis was conducted based on the responses for the 2017 Canadian General Society Survey from non-institutionalized individuals that are 15 years of age or older that are living in the ten provinces of Canada. The target population of this survey is 30,530,800 (N=30520800); this figure was calculated under the assumption that the proportion of individuals that are 15 years of age or older is the same across all the provinces in the country in 2017 (p=0.8382249206) [5], and the population in the provinces in the country in 2017 was 30,622,177 [6]. Of the 20,602 responses that were obtained, our sample only consisted of 11,233 (n=11233) responses (54.5%) after removing responses from individuals who did not respond, skipped, or did not know how to answer a question.
+
+## Measures of interest
+
+### *Feelings of Life*
+
+The primary variable of interest of this study is how people felt about their life as a whole, rated from a scale from 0 to 10, where a 0 represents “Very dissatisfied” and a 1 represents “Very satisfied”. Out of the 20,602 responses that we had, 20,331 (98.7%) responses did not answer “Valid skip”, “Don’t know”, “Refusal” or “Not stated”.
+
+As seen in Figure 1, it is evident that there is a left skew in the life satisfaction scores. Thus we became more interested in predicting whether a person’s life satisfaction score is above or below the mean value. Hence we constructed a new binary variable that represented feelings of life; if a response was below the 50th percentile they would have a feelings of life score of 0, and if a response was on or above the 50th percentile they would have a feelings of life score of 1. The value that represented the 50th percentile was 8.13, however since feelings of life scores are represented as integers, we rounded down to 8; moreover, all responses under 8 received a feelings of life of 0, otherwise 1.
+
+TODO: ** FIGURE 1: SHOW HISTOGRAM OF FEELINGS OF LIFE SCORE, WITH 50% PERCENTILE LINE **
+
+### *Visible Minority*
+
+The socioeconomic factors that we looked at in this study were whether or not the respondent was a visible minority, how many hours the respondent works a week, how much money do they make, and what level of education did the respondent obtain.
+
+A respondent is determined to be not a visible minority if they answer “White”, any other answers like “South Asian”, “Chinese”, “Black”, “Filipino”, “Latin American”, “Arab”, “Southeast Asian”, “West Asian”, “Korean”, or “Japanese”. Visible minority is represented as a 1, and not a visible minority is represented as a 2. Out of the 20,602 respondents, after filtering out “Valid skip”, “Don’t know”, “Refusal”, and “Not stated” entries, there were only 20,148 (97.8%) responses.
+
+### *Other Covariates*
+
+Some other variables that we found to be interesting were state of physical health (Excellent, Very good, Good, Fair, Poor), state of mental health (Excellent, Very good, Good, Fair, Poor), highest level of education obtained (< high school diploma, trade certificate or diploma, College, CEGEP or other non-university certificate, University certificate or diploma below the bachelor’s level, bachelor’s degree, University certificate, diploma or degree above the bachelor’s), hours worked in a week (0 hours, 0.1 to 29.9 hours, 30.0 to 40.0 hours, 40.1 to 50.0 hours, or 50.1 hours and more), family income (<$25,000, $25,000 to $49,999, $50,000 to $74,999, $75,000 to $99,999, $100,000 to $124,999, $125,000 or more), dwelling type (Single detached house, low-rise apartment (less than 5 stories), high rise apartment (5 or more stories), other), and their age in years (ranges from 15 years of age to 80 years of age (80 years of age represents 80 years of age or older)) were retrieved directly from the survey responses.
+
+
+
+# Section 3: Model
+
+# Section 4: Results
+
+# Section 5: Discussion
+
+# References
+
+
 
 ## Model
 We will model the probability of a Canadian feeling satisfied about life as whole based on a set of given factors using Logistic Regression. 
