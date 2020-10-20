@@ -193,7 +193,7 @@ In our analysis, we notice that visible minorities in Canada rate their own over
 Each of `self_rated_mental_health` factor levels are very significant based on their p-values.
 `self_rated_mental_health` has estimates for each factor level: Very Good, Good, Fair, and Poor. The $\beta$ estimates for each are -0.68, -1.57, -2.70, -3.41 respectively as seen from Figure 3 above. The baseline level for this is Excellent and thus the negative $\beta$ coefficient indicates a decrease in log odds of having an above average life satisfaction score in comparison to the Excellent answer. Furthermore, if one rates their own mental health as Fair or Poor, these log odds decrease by an even greater factor than if they rate their mental health as Good or Very Good. 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(sjPlot)
 
 plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health")) +
