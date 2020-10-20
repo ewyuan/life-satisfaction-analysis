@@ -87,7 +87,7 @@ where
 * $\beta_0$ is the intercept estimate
 * $\beta_i$ would represent the change in log odds for every unit increased in the associated predictor
 
-We employws finite population correction as the survey was collected through SRSWOR in each strata.
+We employ finite population correction as the survey was collected through SRSWOR in each strata.
 Also, we used, ‘R’ the statistical programming language to run this model. The Logistic Model was made using the `survey` library.
 
 ## Variable Selection
@@ -215,7 +215,7 @@ To quantify the goodness of fit, we plotted the receiver operating characteristi
 
 ## Weaknesses
 
-We utilize stepwise variable selection when formualting our model. Although removing the variables does result in lower BIC, it does not necessarily mean that the removed variables do not affect the response.Furthermore, every predictor in our model is statistically significant, which does not necessarily make it a good model.
+We utilize stepwise variable selection when formulating our model. Although removing the variables does result in lower BIC, it does not necessarily mean that the removed variables do not affect the response.Furthermore, every predictor in our model is statistically significant, which does not necessarily make it a good model.
 
 Scores can also vary over the years for various reasons that the survey does not capture. Other factors which vary over the years will definitely affect satisfaction in life thus we cannot generalize this analysis to the real world.
 
@@ -236,7 +236,7 @@ A key outcome in our analysis shows visible minorities in general tend to have a
 \newpage
 # Appendix
 ### Survey Design continued.
-Stratification was done based on the provinces. Each province had CMA[s] (Census Metropolitan Area) and non-CMA[s]. The following cities were considered their own strata: St. John’s, Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton, Winnipeg, Regina, Saskatoon, Calgary, Edmonton and Vancouver. Three more stratas were created by grouping the CMA[s] in Quebec, Ontario and British Columbia that are not listed above. Additionally, non-CMA[s] of each province were considered their own strata. Therefore, in total 27 stratas were created. To summarize, 17 stratas were made up of CMA[s] and an additional 10 were made up of the non-CMA[s] of each province. After stratification, phone numbers that belonged to the same address were grouped together. Each of these groups was then assigned to a stratum within the province they belonged to. 
+Stratification was done based on the provinces. Each province had CMA[s] (Census Metropolitan Area) and non-CMA[s]. The following cities were considered their own strata: St. John’s, Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton, Winnipeg, Regina, Saskatoon, Calgary, Edmonton and Vancouver. Three more strata were created by grouping the CMA[s] in Quebec, Ontario and British Columbia that are not listed above. Additionally, non-CMA[s] of each province were considered their own strata. Therefore, in total 27 strata were created. To summarize, 17 strata were made up of CMA[s] and an additional 10 were made up of the non-CMA[s] of each province. After stratification, phone numbers that belonged to the same address were grouped together. Each of these groups was then assigned to a stratum within the province they belonged to. 
 
 
 
