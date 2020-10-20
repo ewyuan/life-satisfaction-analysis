@@ -45,7 +45,7 @@ As seen in Figure 1, it is evident that there is a left skew in the life satisfa
 library(tidyverse)
 
 # Import cleaned GSS data
-setwd("/Users/Lisa/Desktop/PS2/sta304-ps2")
+setwd("~/Documents/sta304-ps2")
 gss <- read_csv("gss.csv")
 
 ggplot(gss, aes(x=feelings_life)) + 
