@@ -1,13 +1,13 @@
 ---
 title: "A Logistic Regression Analysis of Canadian Life Satisfaction Scores"
-author: "Saksham Ahluwalia, Labib Chowdhury, Lisa Oh, Eric Yuan"
+author: "Lisa Oh, Saksham Ahluwalia, Labib Chowdhury, Eric Yuan"
 date: '2020-10-19'
 output: pdf_document
 ---
 Code supporting this analysis is available at: https://github.com/ewyuan/life-satisfaction-analysis
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
+rm(list=ls())
 ```
 
 # Abstract
@@ -15,19 +15,23 @@ knitr::opts_chunk$set(echo = FALSE)
 The purpose of this analysis is to explore the effect of select variables on Canadians’ satisfaction in life using the 2017 General Social Survey data by Statistics Canada. This was explored by a logistic regression model with the binary response variable being whether the individual’s rating for satisfaction in life is above or below the 2017 average. It was found that individuals who are a visible minority and have low ratings of their mental health were more likely to have below average life satisfaction scores.
 
 # Section 1: Introduction
-Life satisfaction is recognized to be an important measure of an individuals well-being. There are a lot of factors that influence one’s satisfaction of life. Factors like income [1], education [2], mental health [3], and physical health intuitively influence an individual’s life satisfaction. Less intuitively, there is increasing evidence that ethnic minorities and immigrants typically have lower levels of life satisfaction when compared to non-visible minorities [4]. Additionally, we wanted to also look into other factors like how many hours an individual works in a week as an additional factor to income; by having the number of hours an individual works in a week, this gives us further insight on the responses where there is high income, but the respondent is overworked which leads to lower levels of life satisfaction.
+Life satisfaction is recognized to be an important measure of an individual's well-being. Factors such as income ^[1]^, education ^[2]^, mental health ^[3]^, and physical health intuitively influence an individual’s life satisfaction. Less intuitively, there is increasing evidence that ethnic minorities and immigrants typically have lower levels of life satisfaction when compared to non-visible minorities ^[4]^. By modeling this, we were able to see which factors made it more likely for an individual to have higher or lower life satisfaction.
 
-In Section 2 we go over the design of the survey, as well as the data we chose and constructed. Section 3 provides the logistic regression model design. Section 4 provides the results of our model. Section 5 provides interpretation and analysis of our model and results.
+In Section 2 we go over the design of the survey, as well as the data we chose and constructed. Section 3 provides details of the logistic regression model. Section 4 provides the results of our model. Finally, Section 5 provides interpretation and analysis of our model results, as well as suggestions for next steps.
 
 # Section 2: Data
 
 ## Survey design
-The following section defines the source of the data, the sampling procedure used in the study, some potential drawbacks of using this specific sampling procedure, how respondents were contacted and finally a brief discussion on how the Non-responses were handled. All of the following information is adapted from the user guide.
+This section defines the source of the data, the sampling procedure used in the study, some potential drawbacks of using this specific sampling procedure, how respondents were contacted and finally a brief discussion on how the Non-responses were handled. All of the following information is adapted from the user guide.
 
-The data set used in this report was collected by GSS (General Social Survey) Canada from February 2nd to November 30th 2017 [12]. All respondents were interviewed via telephone. Households without telephones were excluded from the survey population. Telephone calls were made to randomly selected members within each household captured in the sample frame. During telephone calls if it was determined that a household did not have at least one person 15 years of age or older, the interview was terminated. The sampling technique employed by GSS to collect data for this survey was Stratified Random Sampling technique. Stratification was done based on the provinces. Each province had CMA[s] (Census Metropolitan Area) and non-CMA[s]. The following cities were considered their own strata: St. John’s, Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton, Winnipeg, Regina, Saskatoon, Calgary, Edmonton and Vancouver. Three more stratas were created by grouping the CMA[s] in Quebec, Ontario and British Columbia that are not listed above. Additionally, non-CMA[s] of each province were considered their own strata. Therefore, in total 27 stratas were created. To summarize, 17 stratas were made up of CMA[s] and an additional 10 were made up of the non-CMA[s] of each province. After stratification, phone numbers that belonged to the same address were grouped together. Each of these groups was then assigned to a stratum within the province they belonged to. Finally, a SRS (simple random sampling) without replacement of grouped phone numbers was performed in each stratum. Since the sampling followed SRS we assume that the observations are independent of each other. One of the drawbacks of a probability sampling like SRS is that it might be subject to non-participation from the randomly chosen participants. This can cause more time to be spent to clean and edit the data. For example, in this study non-responses for questions used for weighting were imputed based on other information from the questionnaire. Weights were also calibrated for responding telephones to represent non-responses. Some key-tasks of this survey were to aid the Canadian government with policy decisions. The survey was also designed to monitor changes in the living conditions and well-being of Canadian over time. Some disadvantages to the survey are that some of the survey questions are very long and difficult to understand. The survey is also very lengthy. This might cause some individuals to leave in between the survey. Some strengths of the survey are that if completed it provides lots of data points for analysis that can help the government with policy decisions.
+The data set used in this report was collected by GSS (General Social Survey) Canada from February 2nd to November 30th 2017 ^[12]^. All respondents were interviewed via telephone, and households without telephones were excluded. Telephone calls were made to randomly selected members within each household captured in the sample frame. The sampling technique employed by GSS was Stratified Random Sampling technique, with simple random sampling without replacement of grouped phone numbers within each stratum. Details of the stratification can be found in the Appendix. Since the sampling followed SRS we can assume that the observations are independent of each other. 
+
+One of the drawbacks of a probability sampling like SRS is that it might be subject to non-participation from the randomly chosen participants. This can cause more time to be spent to clean and edit the data. For example, in this study non-responses for questions used for weighting were imputed based on other information from the questionnaire. Weights were also calibrated for responding telephones to represent non-responses. Some key-tasks of this survey were to aid the Canadian government with policy decisions. The survey was also designed to monitor changes in the living conditions and well-being of Canadian over time. 
+
+Some disadvantages to the survey are that some of the survey questions are very long and difficult to understand. The survey is also very lengthy. This might cause some individuals to leave in between the survey. On the other hand, strengths of the survey are that if completed, it contributes to the database thus can helping the government make policy decisions.
 
 ## Study population
-The analysis was conducted based on the responses for the 2017 Canadian General Society Survey from non-institutionalized individuals that are 15 years of age or older that are living in the ten provinces of Canada. The target population of this survey is 30,530,800 (N=30520800); this figure was calculated under the assumption that the proportion of individuals that are 15 years of age or older is the same across all the provinces in the country in 2017 (p=0.8382249206) [5], and the population in the provinces in the country in 2017 was 30,622,177 [6]. Of the 20,602 responses that were obtained, our sample only consisted of 11,233 (n=11233) responses (54.5%) after removing responses from individuals who did not respond, skipped, or did not know how to answer a question.
+The analysis was conducted based on the responses for the 2017 Canadian General Society Survey from non-institutionalized individuals that are 15 years of age or older that are living in the ten provinces of Canada. The target population of this survey is 30,530,800 (N=30520800); this figure was calculated under the assumption that the proportion of individuals that are 15 years of age or older is the same across all the provinces in the country in 2017 (p=0.8382249206) ^[5]^, and the population in the provinces in the country in 2017 was 30,622,177 ^[6]^. Of the 20,602 responses that were obtained, our sample only consisted of 11,233 (n=11233) responses (54.5%) after removing responses from individuals who did not respond, skipped, or did not know how to answer a question.
 
 ## Measures of interest
 
@@ -37,11 +41,11 @@ The primary variable of interest of this study is how people felt about their li
 
 As seen in Figure 1, it is evident that there is a left skew in the life satisfaction scores. Thus we became more interested in predicting whether a person’s life satisfaction score is above or below the mean value. Hence we constructed a new binary variable that represented feelings of life; if a response was below the 50th percentile they would have a feelings of life score of 0, and if a response was on or above the 50th percentile they would have a feelings of life score of 1. The value that represented the 50th percentile was 8.13, however since feelings of life scores are represented as integers, we rounded down to 8; moreover, all responses under 8 received a feelings of life of 0, otherwise 1.
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 
 # Import cleaned GSS data
-setwd("/Users/labibchowdhury/coursework/STA304/sta304-ps2/")
+setwd("/Users/Lisa/Desktop/PS2/sta304-ps2")
 gss <- read_csv("gss.csv")
 
 ggplot(gss, aes(x=feelings_life)) + 
@@ -77,8 +81,8 @@ $$
 $$
 where 
 
-* $p$ = the probability of a Canadian rating their overall satisfaction above the sample average. We call the LHS the “log odds”. This is modeled by Eq 1,
-* $K$ = (number of predictors)x(number of levels in each predictor)
+* $p$ = the probability of a Canadian rating their overall satisfaction above the sample average. We call the LHS the “log odds” of $p$. 
+* $K$ = (number of predictors) $\cdot$ (number of levels in each predictor)
 * $x_i$ refers to the chosen predictors, and each x_i would have its own factor levels
 * $\beta_0$ is the intercept estimate
 * $\beta_i$ would represent the change in log odds for every unit increased in the associated predictor
@@ -88,20 +92,20 @@ Also, we used, ‘R’ the statistical programming language to run this model. T
 
 ## Variable Selection
 
-Initially, a full logistic model with the eight variables of interest. Then, the model was reduced through backward stepwise variable selection with the Bayesian Information Criterion (BIC).  The backward stepwise procedure initially includes all variables in the model then drops a variable one by one as long as the model then results in a lower BIC. This is repeated until no more variables can be dropped. BIC is a criterion for model selection which penalizes models with too many variables [7]. This method reduced the number of variables to six.
+Initially, a full logistic model with the eight variables of interest. Then, the model was reduced through backward stepwise variable selection with the Bayesian Information Criterion (BIC).  The backward stepwise procedure initially includes all variables in the model then drops a variable one by one as long as the model then results in a lower BIC. This is repeated until no more variables can be dropped. BIC is a criterion for model selection which penalizes models with too many variables ^[7]^. This method reduced the number of variables to six.
 The predictors chosen are: `age` (continuous, 15-80), `vis_minority`(binary, yes or no) , `hh_type`(categorical), `family_income`(categorical), `self_rated_health`(categorical), `self_rated_mental_health`(categorical). All categorical variables are represented as factors in our model. 
 
 ## Alternative Models
 
-Rather than a Logistic Model, we can use a Linear Model where the response would be the raw satisfaction score rather than the binary interpretation of this. This can produce a continuous response to determine the rating of each individual’s “feelings_life”, which would be easy to interpret. A weakness with this is that the predictors are mainly categorical variables, which can produce inaccurate results due to underfitting and sensitivity to outliers [8] compared with the Logistic Model.
+Rather than a Logistic Model, we can use a Linear Model where the response would be the raw satisfaction score rather than the binary interpretation of this. This can produce a continuous response to determine the rating of each individual’s “feelings_life”, which would be easy to interpret. A weakness with this is that the predictors are mainly categorical variables, which can produce inaccurate results due to underfitting and sensitivity to outliers ^[8]^ compared with the Logistic Model.
 
-The Logistic Model we’ve chosen selects only significant predictors chosen by the stepwise selection procedure. An alternative model would include every predictor of interest rather than the ones selected. While this model may be more accurate, it may result in overfitting based on the amount of predictors [7].
+The Logistic Model we’ve chosen selects only significant predictors chosen by the stepwise selection procedure. An alternative model would include every predictor of interest rather than the ones selected. While this model may be more accurate, it may result in overfitting based on the amount of predictors ^[7]^.
 
 ## Model Convergence, Model Checks, Diagnostic Issues
 
-As the `svyglm()` process to calculate the estimates for $\beta$ coefficients succeeded, we can determine the model converges. This logistic model employs an iterative maximum likelihood algorithm to fit the data [9]. Using the Number of Fisher Scoring iterations output from the model, we can observe how many iterations the model needs to converge. As shown in the results below, our model needed 4 iterations to converge.
+As the `svyglm()` process to calculate the estimates for $\beta$ coefficients succeeded, we can determine the model converges. This logistic model employs an iterative maximum likelihood algorithm to fit the data ^[9]^. Using the Number of Fisher Scoring iterations output from the model, we can observe how many iterations the model needs to converge. As shown in the results below, our model needed 4 iterations to converge.
 
-Using an ROC Curve, we assessed the ability of our model to distinguish classes accurately by comparing the True Positive Rate and False Positive Rates [10]. The Area Under the Curve (AUC) helps quantify this relationship. If the AUC is closer to 0.5, then we can determine the model is no better than chance in predicting the probability [10] that an individual will rate their overall satisfaction above the sample average. Our model produced an AUC of ~0.76, which signifies it is fairly accurate in predicting this probability as it is closer to 1 than 0.5.
+Using an ROC Curve, we assessed the ability of our model to distinguish classes accurately by comparing the True Positive Rate and False Positive Rates ^[10]^. The Area Under the Curve (AUC) helps quantify this relationship. If the AUC is closer to 0.5, then we can determine the model is no better than chance in predicting the probability ^[10]^ that an individual will rate their overall satisfaction above the sample average. Our model produced an AUC of ~0.76, which signifies it is fairly accurate in predicting this probability as it is closer to 1 than 0.5.
 
 ## Sampling Procedure Model Implications
 
@@ -111,7 +115,6 @@ The sampling procedure employed to collect the GSS data resulted in a majority o
 
 ```{r, include=FALSE}
 #install.packages("survey")
-rm(list=ls())
 library(janitor)
 library(tidyverse)
 library(survey)
@@ -152,16 +155,17 @@ roc_curve <- function(glm){
   plot(FPR, TPR, xlim =c(0,1), ylim =c(0,1), type ='l', lty = 1, lwd = 2,col ='red', bty = "n", main="ROC")
   abline(a = 0, b = 1, lty = 2, col ='blue')
   text(0.7,0.4,label =paste("AUC = ",round(auc(roc_logit2),4)))
-  auc(roc_logit2) 
+  # auc(roc_logit2) 
 }
 
 par(mfrow=c(1,2)) # put two graphs on same line
 roc_curve(satisfied.glm)
 roc_curve(glm_step_bic)
 ```
+
 [Figure 2. ROC Curve of Full Model vs  Stepwise Model]
 
-This graph is comparing the ROC Curves of the two models, Full Model and Stepwise Model. The AUC of each model is also displayed to allow us to determine the quality of given models. The stepwise technique removed predictors “education” and “hours_worked”
+This graph is comparing the ROC Curves of the two models, Full Model and Stepwise Model. The AUC of each model is also displayed to allow us to determine the quality of given models. The stepwise technique removed predictors “education” and “hours_worked”.
 
 ### Model Summary
 
@@ -193,6 +197,8 @@ In our analysis, we notice that visible minorities in Canada rate their own over
 Each of `self_rated_mental_health` factor levels are very significant based on their p-values.
 `self_rated_mental_health` has estimates for each factor level: Very Good, Good, Fair, and Poor. The $\beta$ estimates for each are -0.68, -1.57, -2.70, -3.41 respectively as seen from Figure 3 above. The baseline level for this is Excellent and thus the negative $\beta$ coefficient indicates a decrease in log odds of having an above average life satisfaction score in comparison to the Excellent answer. Furthermore, if one rates their own mental health as Fair or Poor, these log odds decrease by an even greater factor than if they rate their mental health as Good or Very Good. 
 
+
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(sjPlot)
 
@@ -201,7 +207,7 @@ plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health")) +
 ```
 [Figure 4. Predicted probabilities of `feelings_life` based on `self_rated_mental_health`]
 
-This plot shows the predicted probability of the “feelings_life_binary” response variable based on the “self_rated_mental_health” predictor.  It is showing the probability that one would rate their own overall satisfaction with life as above the sample average based on their own mental health rating. This plot and Figure 5 were generated using the R Library sjPlot [11].
+This plot shows the predicted probability of the “feelings_life_binary” response variable based on the “self_rated_mental_health” predictor.  It is showing the probability that one would rate their own overall satisfaction with life as above the sample average based on their own mental health rating. This plot and Figure 5 were generated using the R Library sjPlot ^[11]^.
 
 ## Goodness of Fit
 
@@ -209,11 +215,11 @@ To quantify the goodness of fit, we plotted the receiver operating characteristi
 
 ## Weaknesses
 
-We utilize stepwise variable selection when formualting our model. Although removing the variables does result in lower BIC, it does not necessarily mean that the removed variables do not affect the response.
-Scores can also vary over the years for various reasons that the survey does not capture. In a year like 2020, other factors will definitely affect satisfaction in life more thus we cannot generalize this analysis to the real world.
-Finally, every predictor in our model is statistically significant, which is not neccessarily a good thing
+We utilize stepwise variable selection when formualting our model. Although removing the variables does result in lower BIC, it does not necessarily mean that the removed variables do not affect the response.Furthermore, every predictor in our model is statistically significant, which does not necessarily make it a good model.
 
-It is also important to note the topic of satisfaction in life is subjective, and the variables selected may not accurately portray an individuals factors in regards to satisfaction.
+Scores can also vary over the years for various reasons that the survey does not capture. Other factors which vary over the years will definitely affect satisfaction in life thus we cannot generalize this analysis to the real world.
+
+It is also important to note the topic of satisfaction in life is subjective, and the variables selected may not be the most important factors in regards to this topic.
 
 ## Next Steps
 
@@ -227,15 +233,18 @@ A key outcome in our analysis shows visible minorities in general tend to have a
 
 
 
-
+\newpage
 # Appendix
+### Survey Design continued.
+Stratification was done based on the provinces. Each province had CMA[s] (Census Metropolitan Area) and non-CMA[s]. The following cities were considered their own strata: St. John’s, Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton, Winnipeg, Regina, Saskatoon, Calgary, Edmonton and Vancouver. Three more stratas were created by grouping the CMA[s] in Quebec, Ontario and British Columbia that are not listed above. Additionally, non-CMA[s] of each province were considered their own strata. Therefore, in total 27 stratas were created. To summarize, 17 stratas were made up of CMA[s] and an additional 10 were made up of the non-CMA[s] of each province. After stratification, phone numbers that belonged to the same address were grouped together. Each of these groups was then assigned to a stratum within the province they belonged to. 
+
 
 ```{r, echo=FALSE, message=FALSE}
 plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "") +
   scale_y_continuous(labels = scales::comma)
 ```
 [Figure 5. Predicted probabilities of “feelings life” based on “self_rated_mental_health” and “vis_minority”]
-This plot is showing a similar relationship as Figure 4, but also taking into the account the “vis_minority” predictor [6].
+This plot is showing a similar relationship as Figure 4, but also taking into the account the “vis_minority” predictor ^[6]^.
 
 ```{r, echo=FALSE, message=FALSE}
 data %>% 
