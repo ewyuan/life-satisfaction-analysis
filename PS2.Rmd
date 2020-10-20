@@ -1,16 +1,18 @@
 ---
-title: "PS2"
+title: "A Logistic Regression Analysis of Canadian Life Satisfaction Scores"
 author: "Saksham Ahluwalia, Labib Chowdhury, Lisa Oh, Eric Yuan"
-date: '2020-10-12'
+date: '2020-10-19'
 output: pdf_document
 ---
-
+Code supporting this analysis is available at: https://github.com/ewyuan/life-satisfaction-analysis
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
 # Abstract
+
+The purpose of this analysis is to explore the effect of select variables on Canadians’ satisfaction in life using the 2017 General Social Survey data by Statistics Canada. This was explored by a logistic regression model with the binary response variable being whether the individual’s rating for satisfaction in life is above or below the 2017 average. It was found that individuals who are a visible minority and have low ratings of their mental health were more likely to have below average life satisfaction scores.
 
 # Section 1: Introduction
 Life satisfaction is recognized to be an important measure of an individuals well-being. There are a lot of factors that influence one’s satisfaction of life. Factors like income [1], education [2], mental health [3], and physical health intuitively influence an individual’s life satisfaction. Less intuitively, there is increasing evidence that ethnic minorities and immigrants typically have lower levels of life satisfaction when compared to non-visible minorities [4]. Additionally, we wanted to also look into other factors like how many hours an individual works in a week as an additional factor to income; by having the number of hours an individual works in a week, this gives us further insight on the responses where there is high income, but the respondent is overworked which leads to lower levels of life satisfaction.
@@ -35,11 +37,11 @@ The primary variable of interest of this study is how people felt about their li
 
 As seen in Figure 1, it is evident that there is a left skew in the life satisfaction scores. Thus we became more interested in predicting whether a person’s life satisfaction score is above or below the mean value. Hence we constructed a new binary variable that represented feelings of life; if a response was below the 50th percentile they would have a feelings of life score of 0, and if a response was on or above the 50th percentile they would have a feelings of life score of 1. The value that represented the 50th percentile was 8.13, however since feelings of life scores are represented as integers, we rounded down to 8; moreover, all responses under 8 received a feelings of life of 0, otherwise 1.
 
-```{r}
+```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 
 # Import cleaned GSS data
-setwd("~/Documents/sta304-ps2")
+setwd("/Users/labibchowdhury/coursework/STA304/sta304-ps2/")
 gss <- read_csv("gss.csv")
 
 ggplot(gss, aes(x=feelings_life)) + 
@@ -65,26 +67,50 @@ Some other variables that we found to be interesting were state of physical heal
 
 # Section 3: Model
 
-# Section 4: Results
+Due to the binary nature of the response variable, a logistic regression model was most appropriate. This model requires independence of observations (each survey response) and this is met as discussed in the previous section.
+In other words, logistic regression assumes a linear relationship between the predictor variables and the log odds of the response variable.
+We want to model the log odds of the probability of a Canadian rating themselves as  “satisfied with life” based on chosen factors. 
 
-# Section 5: Discussion
-
-# References
-
-
-
-## Model
-We will model the probability of a Canadian feeling satisfied about life as whole based on a set of given factors using Logistic Regression. 
-
-Let $p$ = the probability of a Canadian feeling satisfied, where "feeling satisfied" is determined if an individual rates their feeling about life as a whole greater than 8. Then our GLM will be formulated as the following: 
+Therefore, we are modeling: (Eq. 1)
 $$
 \log({\frac{p}{1-p}}) = \beta_0 + \sum^{K}_{i=1}\beta_ix_i
 $$
+where 
 
-## Results
-```{r}
+* $p$ = the probability of a Canadian rating their overall satisfaction above the sample average. We call the LHS the “log odds”. This is modeled by Eq 1,
+* $K$ = (number of predictors)x(number of levels in each predictor)
+* $x_i$ refers to the chosen predictors, and each x_i would have its own factor levels
+* $\beta_0$ is the intercept estimate
+* $\beta_i$ would represent the change in log odds for every unit increased in the associated predictor
+
+We also employ finite population correction as the survey was collected through SRSWOR in each strata.
+Also, we used, ‘R’ the statistical programming language to run this model. The Logistic Model was made using the `survey` library in 'R'.
+
+## Variable Selection
+
+Initially, a full logistic model with the eight variables of interest. Then, the model was reduced through backward stepwise variable selection with the Bayesian Information Criterion (BIC).  The backward stepwise procedure initially includes all variables in the model then drops a variable one by one as long as the model then results in a lower BIC. This is repeated until no more variables can be dropped. BIC is a criterion for model selection which penalizes models with too many variables [7]. This method reduced the number of variables to six.
+The predictors chosen are: `age` (continuous, 15-80), `vis_minority`(binary, yes or no) , `hh_type`(categorical), `family_income`(categorical), `self_rated_health`(categorical), `self_rated_mental_health`(categorical). All categorical variables are represented as factors in our model. 
+
+## Alternative Models
+
+Rather than a Logistic Model, we can use a Linear Model where the response would be the raw satisfaction score rather than the binary interpretation of this. This can produce a continuous response to determine the rating of each individual’s “feelings_life”, which would be easy to interpret. A weakness with this is that the predictors are mainly categorical variables, which can produce inaccurate results due to underfitting and sensitivity to outliers [8] compared with the Logistic Model.
+
+The Logistic Model we’ve chosen selects only significant predictors chosen by the stepwise selection procedure. An alternative model would include every predictor of interest rather than the ones selected. While this model may be more accurate, it may result in overfitting based on the amount of predictors [7].
+
+## Model Convergence, Model Checks, Diagnostic Issues
+
+As the `svyglm()` process to calculate the estimates for $\beta$ coefficients succeeded, we can determine the model converges. This logistic model employs an iterative maximum likelihood algorithm to fit the data [9]. Using the Number of Fisher Scoring iterations output from the model, we can observe how many iterations the model needs to converge. As shown in the results below, our model needed 4 iterations to converge.
+
+Using an ROC Curve, we assessed the ability of our model to distinguish classes accurately by comparing the True Positive Rate and False Positive Rates [10]. The Area Under the Curve (AUC) helps quantify this relationship. If the AUC is closer to 0.5, then we can determine the model is no better than chance in predicting the probability [10] that an individual will rate their overall satisfaction above the sample average. Our model produced an AUC of ~0.76, which signifies it is fairly accurate in predicting this probability as it is closer to 1 than 0.5.
+
+## Sampling Procedure Model Implications
+
+The sampling procedure employed to collect the GSS data resulted in a majority of the results being categorical rather than continuous. This included fields such as hours_worked, which could have been either categorical or continuous. Due to the fact that most of the data was categorical, it made sense to use a Logistic Model rather than a Linear Model, which heavily influenced our decision.
+
+# Section 4: Results
+
+```{r, include=FALSE}
 #install.packages("survey")
-#install.packages("brms")
 rm(list=ls())
 library(janitor)
 library(tidyverse)
@@ -111,9 +137,164 @@ satisfied.glm %>%
 
 glm_step_bic <- step(satisfied.glm, k=log(n), trace=0)
 glm_step_bic
+```
 
+### ROC Curve
+
+```{r, echo=FALSE, message=FALSE}
+#Goodness of Fit: ROC curve
+roc_curve <- function(glm){
+  p2 <- fitted(glm)
+  y <- data$feelings_life_binary
+  roc_logit2 <- roc(y ~ p2)
+  TPR <- roc_logit2$sensitivities
+  FPR <- 1 - roc_logit2$specificities
+  plot(FPR, TPR, xlim =c(0,1), ylim =c(0,1), type ='l', lty = 1, lwd = 2,col ='red', bty = "n", main="ROC")
+  abline(a = 0, b = 1, lty = 2, col ='blue')
+  text(0.7,0.4,label =paste("AUC = ",round(auc(roc_logit2),4)))
+  auc(roc_logit2) 
+}
+
+par(mfrow=c(1,2)) # put two graphs on same line
+roc_curve(satisfied.glm)
+roc_curve(glm_step_bic)
+```
+[Figure 2. ROC Curve of Full Model vs  Stepwise Model]
+
+This graph is comparing the ROC Curves of the two models, Full Model and Stepwise Model. The AUC of each model is also displayed to allow us to determine the quality of given models. The stepwise technique removed predictors “education” and “hours_worked”
+
+### Model Summary
+
+```{r, echo=FALSE, message=FALSE}
 glm_step_bic %>% 
   broom::tidy() %>% 
   knitr::kable()
 
 ```
+
+[Figure 3. Summary of Estimates in Stepwise GLM]
+
+This table shows the estimates, standard error,  test statistic, and p-values  for all predictors and their factor levels of the stepwise model.
+
+# Section 5: Discussion
+
+## Model Interpretation
+
+Seen in Figure 3, all variables had p-value less than 0.05 meaning they were all significant so we will select a couple variables to interpret the results
+
+### *vis_minority*
+
+The `vis_minority` predictor has a $\beta$ estimate of -0.23. `vis_minority` is an indicator variable which equates to 1 if the respondent is a visible minority or 0 otherwise. Our model tells us that if an individual is a visible minority, the log odds for the probability they will rate their overall satisfaction with life as above average will decrease by a factor of 0.23. This signifies that in general, visible minorities rate their overall satisfaction with life as less than non visible minorities. This may be due to the low sample size of visible minorities in the dataset. Visible minorities seem to also have lower family income compared to non visible minorities as shown by Figure 6 in the appendix.
+
+In our analysis, we notice that visible minorities in Canada rate their own overall satisfaction with life as below average. There are many factors that can account for this. As mentioned previously, according to the GSS data, visible minorities have a lower family income while working similar hours compared to non visible minorities (Figures 6 and 7). Thus we can infer that visible minorities have lower wages compared to non visible minorities, which may relate to why visible minorities have an overall lower satisfaction with life. It is also important to note only 13% of our data consists of visible minorities thus this may not be a proper representation of the group.
+
+### *self_rated_mental_health*
+
+Each of `self_rated_mental_health` factor levels are very significant based on their p-values.
+`self_rated_mental_health` has estimates for each factor level: Very Good, Good, Fair, and Poor. The $\beta$ estimates for each are -0.68, -1.57, -2.70, -3.41 respectively as seen from Figure 3 above. The baseline level for this is Excellent and thus the negative $\beta$ coefficient indicates a decrease in log odds of having an above average life satisfaction score in comparison to the Excellent answer. Furthermore, if one rates their own mental health as Fair or Poor, these log odds decrease by an even greater factor than if they rate their mental health as Good or Very Good. 
+
+```{r, echo=FALSE, message=FALSE}
+library(sjPlot)
+
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health")) +
+  scale_y_continuous(labels = scales::comma)
+```
+[Figure 4. Predicted probabilities of `feelings_life` based on `self_rated_mental_health`]
+
+This plot shows the predicted probability of the “feelings_life_binary” response variable based on the “self_rated_mental_health” predictor.  It is showing the probability that one would rate their own overall satisfaction with life as above the sample average based on their own mental health rating. This plot and Figure 5 were generated using the R Library sjPlot [11].
+
+## Goodness of Fit
+
+To quantify the goodness of fit, we plotted the receiver operating characteristic (ROC) curve. This curve is obtained by plotting the true positive rate (model correctly detects a positive outcome) against the false positive rate (model incorrectly detects a positive outcome), where a positive indicates an above average life satisfaction score. The area under the curve (AUC) is calculated to determine how good the model is at classifying points. It ranges between 0.5 and 1, where 0.5 indicates the model is randomly deciding the positives and 1 indicates the model is perfect at deciding the positives. The AUC value for our logistic model was ~0.77, meaning the model has good discrimination ability but there is room for improvement.
+
+## Weaknesses
+
+We utilize stepwise variable selection when formualting our model. Although removing the variables does result in lower BIC, it does not necessarily mean that the removed variables do not affect the response.
+Scores can also vary over the years for various reasons that the survey does not capture. In a year like 2020, other factors will definitely affect satisfaction in life more thus we cannot generalize this analysis to the real world.
+Finally, every predictor in our model is statistically significant, which is not neccessarily a good thing
+
+It is also important to note the topic of satisfaction in life is subjective, and the variables selected may not accurately portray an individuals factors in regards to satisfaction.
+
+## Next Steps
+
+In terms of our model, the addition of interaction terms may help model the response variable better than our current model. It would be useful to experiment with a wider array of predictors and interaction terms.
+
+It may be valuable to analyze distributions in life satisfaction scores over different years. This can provide further insight and identify consistent predictors related to overall satisfaction in life.
+
+A key outcome in our analysis shows visible minorities in general tend to have a lower satisfaction in life compared to non visible minorities. To further this analysis, we would need to collect more data with visible minorities to increase the sample size and verify the estimate still holds. If this is the case, it would be valuable to dive deeper into why visible minorities have a lower satisfaction in life and what steps we can suggest to improve this.
+
+
+
+
+
+
+# Appendix
+
+```{r, echo=FALSE, message=FALSE}
+plot_model(glm_step_bic, type = "pred", terms = c("self_rated_mental_health", "vis_minority"), value.offset = .9, axis.labels = "") +
+  scale_y_continuous(labels = scales::comma)
+```
+[Figure 5. Predicted probabilities of “feelings life” based on “self_rated_mental_health” and “vis_minority”]
+This plot is showing a similar relationship as Figure 4, but also taking into the account the “vis_minority” predictor [6].
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  ggplot( aes(y=family_income, fill=vis_minority)) +
+  geom_bar() +
+  ylab("Family Income") +
+  xlab("Total Count") +
+  ggtitle("Family Income Between Visible Minority and Non Visible Minority")
+```
+[Figure 6. Family Income of Visible Minorities vs Non Visible Minorities]
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  ggplot( aes(y=hours_worked, fill=vis_minority)) +
+  geom_bar() +
+  ylab("Hours Worked") +
+  xlab("Total Count") +
+  ggtitle("Hours Worked Between Visible Minority and Non Visible Minority")
+```
+[Figure 7. Hours Worked of Visible Minorities vs Non Visible Minorities]
+
+# References
+
+[1]
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4686135/
+
+[2]
+https://iaap-journals.onlinelibrary.wiley.com/doi/abs/10.1111/apps.12158
+
+[3]
+https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-018-5235-x
+
+[4] 
+https://www.sciencedirect.com/science/article/pii/S0049089X16302095
+
+[5]
+https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501
+
+[6]
+https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901&cubeTimeFrame.startMonth=01&cubeTimeFrame.startYear=2017&cubeTimeFrame.endMonth=10&cubeTimeFrame.endYear=2017&referencePeriods=20170101%2C20171001
+
+[7]
+https://www.methodology.psu.edu/resources/AIC-vs-BIC/
+
+[8] https://stats.idre.ucla.edu/spss/faq/coding-systems-for-categorical-variables-in-regression-analysis-2/
+
+[9]
+https://www.rdocumentation.org/packages/survey/versions/4.0/topics/svyglm
+
+[10]
+https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc
+
+[11]
+https://cran.r-project.org/web/packages/sjPlot/sjPlot.pdf
+
+[12]
+Statistics Canada. (2016).Cycle 31 : Families Public Use Microdata File Documentation and User’s Guide. Catalogue no. 45250001. Ottawa, ON: Statistics Canada.
+Retrieved from http://www.odesi.ca
+
+
+
+
